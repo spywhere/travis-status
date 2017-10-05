@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        body {
+            font: caption;
+            color: #fff;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
+        }
+        input, a, button, textarea, :focus {
+            outline: none;
+        }
+        a {
+            color: #999;
+        }
+        p, h1, h2, h3 {
+            text-align: center;
+        }
+        invalid {
+            border: 1px solid #f66;
+        }
+        input[type="text"] {
+            border: 1px solid #fff;
+            background: none;
+            font-size: 14pt;
+            padding: 5px;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .button {
+            border: 1px solid #fff;
+            background: rgba(255, 255, 255, 0);
+            border-radius: 5px;
+            font-size: 10pt;
+            padding: 5px;
+            color: #fff;
+            text-decoration: none;
+            min-width: 50px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .button.submit {
+            background: #6c6;
+        }
+        .button.submit:hover {
+            background: #8e8;
+        }
+        .button.submit:disabled {
+            background: #666;
+            cursor: default;
+        }
+        .button.help {
+            padding: 0px;
+            border: 0px;
+            font-size: 8pt;
+            text-decoration: underline;
+        }
+
+        .segmented > input {
+            display: none;
+        }
+        .segmented > label {
+            display: inline-block;
+            color: #fff;
+            padding: 6px 10px;
+            min-width: 100px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .segmented > label:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .segmented > input:checked + label {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .segmented > label:not(:last-child) {
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .button.segmented {
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-block;
+            padding: 0px;
+        }
+        .button.segmented:hover {
+            background: none;
+        }
+
+        .dropdown > ul {
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+
+            font-size: 10pt;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            padding: 6px 10px;
+            min-width: 120px;
+            list-style: none;
+            text-align: center;
+        }
+        .dropdown > ul:hover {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+        .dropdown > ul:hover > li > ul {
+            display: block;
+        }
+        .dropdown > ul > li > ul {
+            position: absolute;
+            left: 50%;
+            margin-top: 6px;
+            transform: translateX(-50%);
+            width: max-content;
+
+            display: none;
+            background: #222;
+            list-style: none;
+            padding: 0px;
+            border: 1px solid #fff;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        .dropdown > ul > li > ul > li {
+            color: #babdc4;
+            padding: 6px 10px;
+            min-width: 120px;
+        }
+        .dropdown > ul > li > ul > li:not(:last-child) {
+            border-bottom: 1px solid #fff;
+        }
+        .dropdown > ul > li > ul > li:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Travis CI Status - Preferences</h2>
+
+    <div class="segmented button">
+        <input type="radio" id="travis-ci" name="product" onchange="update();" checked><label for="travis-ci">Travis CI</label><input type="radio" id="travis-ci-pro" name="product" onchange="update();"><label for="travis-ci-pro">Travis CI Pro</label>
+    </div>
+
+    <p>Refresh Interval</p>
+    <p>
+        <input type="hidden" id="interval-value">
+        <div class="dropdown">
+            <ul>
+                <li>
+                    <span id="selected-interval">Every minute</span>
+                    <ul>
+                        <li onclick="updateInterval(-1);">Smart</li>
+                        <li onclick="updateInterval(0);">Manual</li>
+                        <li onclick="updateInterval(0.5);">Every 30 seconds</li>
+                        <li onclick="updateInterval(1);">Every minute</li>
+                        <li onclick="updateInterval(2);">Every 2 Minute</li>
+                        <li onclick="updateInterval(3);">Every 3 Minute</li>
+                        <li onclick="updateInterval(5);">Every 5 Minute</li>
+                        <li onclick="updateInterval(10);">Every 10 Minute</li>
+                        <li onclick="updateInterval(30);">Every 30 Minute</li>
+                        <li onclick="updateInterval(60);">Every hour</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </p>
+
+    <p><span id="product">Travis-CI</span> API Token</p>
+    <p>
+        <input type="text" id="token" placeholder="API Token" onkeyup="validate();">
+    </p>
+    <p>
+        <input class="help button" type="button" value="How to find?" onclick="help();">
+    </p>
+
+    <p>
+        <input type="checkbox" id="show-starred-repos" checked>
+        <label for="show-starred-repos">Show Starred Repositories</label>
+    </p>
+    <p>
+        <input type="checkbox" id="show-repos" checked>
+        <label for="show-repos">Show Repositories</label>
+    </p>
+
+    <p>
+        <input class="submit button" type="button" value="OK" onclick="response();">
+        <input class="button" type="button" value="Cancel" onclick="cancel();">
+    </p>
+
+    <script src="./preferences.js"></script>
+</body>
+
+</html>
