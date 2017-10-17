@@ -8,7 +8,7 @@ class API {
     }
 
     createURL(){
-        let url = new URL(`https://${ this.host }`);
+        let url = new URL(`https://api.${ this.host }`);
         return url;
     }
 

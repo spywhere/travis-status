@@ -7,7 +7,6 @@ const api = require("./api");
 
 const preferences = require("./ipc-process/preferences");
 
-// Broadcast
 // Auth
 // - https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization
 // - https://developer.github.com/v3/auth/#working-with-two-factor-authentication
@@ -18,6 +17,8 @@ let lastState = undefined;
 let multiplier = 1;
 let currentDuration = 10000;
 let currentTimer;
+let broadcasts = [];
+let status = undefined;
 
 let tray;
 
@@ -41,12 +42,27 @@ app.once("ready", () => {
 
     tray = new Tray(config.image("icon-idle"));
 
+    buildMenu();
+    startup();
+});
+
+function startup(){
+    if (
+        (settings["travis-ci"] && settings["travis-ci"]["token"]) ||
+        (settings["travis-ci-pro"] && settings["travis-ci-pro"]["token"])
+    ) {
+        updateStatus();
+        updateBroadcasts();
+    } else {
+        showPreferences();
+    }
+}
+
+function buildMenu(){
     let contextMenu = Menu.buildFromTemplate(defaultMenu);
 
     tray.setContextMenu(contextMenu);
-
-    tryToUpdate(true);
-});
+}
 
 function tryToUpdate(firstTime){
     if (
@@ -54,6 +70,7 @@ function tryToUpdate(firstTime){
         (settings["travis-ci-pro"] && settings["travis-ci-pro"]["token"])
     ) {
         updateStatus();
+        updateBroadcasts();
     } else if (firstTime) {
         showPreferences();
     }
@@ -106,10 +123,10 @@ function repoMenuMapper(repo){
     };
 }
 
-function updateStatus(){
-    let preferences = {
+function getPreferences(){
+    return {
         "travis-ci": {
-            endpoint: "api.travis-ci.org",
+            endpoint: "travis-ci.org",
             token: (
                 settings["travis-ci"] ?
                 settings["travis-ci"]["token"] :
@@ -122,7 +139,7 @@ function updateStatus(){
             )
         },
         "travis-ci-pro": {
-            endpoint: "api.travis-ci.com",
+            endpoint: "travis-ci.com",
             token: (
                 settings["travis-ci-pro"] ?
                 settings["travis-ci-pro"]["token"] :
@@ -135,6 +152,10 @@ function updateStatus(){
             )
         }
     };
+}
+
+function updateStatus(){
+    let preferences = getPreferences();
 
     Promise.all([
         (
@@ -310,6 +331,17 @@ function updateStatus(){
     });
 }
 
+function updateBroadcasts(){
+    // return new Promise((resolve, reject) => {
+    //     console.log("getting broadcasts...");
+    //     callTravisCI(api(endpoint).broadcasts({
+    //         active: false
+    //     }), token).then((response) => {
+    //         console.log(response.body);
+    //     }).catch(reject);
+    // });
+}
+
 function callTravisCI(url, token){
     return new Promise((resolve, reject) => {
         rq(url.href, {
@@ -403,6 +435,7 @@ function getTravisCIStatus(endpoint, token, onlyStarred){
 
                 let repoInfo = {
                     href: repo["@href"],
+                    starred: repo["starred"],
                     slug: repo.slug,
                     branch: (
                         current_build ? current_build.branch.name : undefined
@@ -413,7 +446,7 @@ function getTravisCIStatus(endpoint, token, onlyStarred){
 
                 if (!onlyStarred || repo.starred) {
                     reposBuilds.push(Promise.all([
-                        Promise.resolve(repo),
+                        Promise.resolve(repoInfo),
                         callTravisCI(api(endpoint, repo).repositoryBuilds({
                             limit: 3
                         }), token)
