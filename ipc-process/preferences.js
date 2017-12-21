@@ -1,6 +1,6 @@
 const path = require("path");
 const url = require("url");
-const { BrowserWindow, ipcMain } = require("electron");
+const { BrowserWindow, ipcMain, Menu } = require("electron");
 const config = require("../config");
 
 module.exports = (preferences) => {
@@ -35,6 +35,28 @@ module.exports = (preferences) => {
             slashes: true,
             pathname: config.view("preferences")
         }));
+
+        window.webContents.on("context-menu", (event, params) => {
+            let menu = Menu.buildFromTemplate([{
+                label: "Cut",
+                role: "cut",
+            }, {
+                label: "Copy",
+                role: "copy",
+            }, {
+                label: "Paste",
+                role: "paste",
+            }, {
+                type: "separator",
+            }, {
+                label: "Select all",
+                role: "selectall",
+            }]);
+
+            if (params.inputFieldType === "plainText") {
+                menu.popup(window);
+            }
+        });
 
         ipcMain.on("preferences", (event, data) => {
             if (data) {
