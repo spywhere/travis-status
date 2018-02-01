@@ -1,4 +1,4 @@
-const {app, Tray, Menu, shell} = require("electron");
+const { app, Tray, Menu, shell } = require("electron");
 const path = require("path");
 const moment = require("moment");
 const rq = require("request");
@@ -38,7 +38,9 @@ let defaultMenu = [{
 app.on("window-all-closed", () => {});
 
 app.once("ready", () => {
-    app.dock.hide();
+    if (app.dock) {
+        app.dock.hide();
+    }
 
     tray = new Tray(config.image("icon-idle"));
 
