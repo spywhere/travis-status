@@ -7,6 +7,8 @@ const api = require("./api");
 
 const preferences = require("./ipc-process/preferences");
 
+// https://www.npmjs.com/package/travis-ci
+
 // Auth
 // - https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization
 // - https://developer.github.com/v3/auth/#working-with-two-factor-authentication
