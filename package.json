@@ -8,12 +8,12 @@
     "build": "electron-packager ./ \"Travis CI Status\" --asar --overwrite --no-package-manager --out dist"
   },
   "devDependencies": {
-    "electron": "^1.7.5",
-    "electron-packager": "^9.1.0",
+    "electron": "^1.8.2",
+    "electron-packager": "^11.0.1",
     "svg2png": "^4.1.1"
   },
   "dependencies": {
-    "moment": "^2.18.1",
-    "request": "^2.81.0"
+    "moment": "^2.20.1",
+    "request": "^2.83.0"
   }
 }
