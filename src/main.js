@@ -1,11 +1,22 @@
 const { app, Tray, Menu, shell } = require("electron");
+const { URL } = require("url");
 const path = require("path");
+const fs = require("fs");
 const moment = require("moment");
 const rq = require("request");
+const semver = require("semver");
 const config = require("./config");
 const api = require("./api");
 
 const preferences = require("./ipc-process/preferences");
+const version_url = new URL(
+    "https://raw.githubusercontent.com/spywhere/travis-status/master/package.json"
+);
+const release_url = new URL(
+    "https://github.com/spywhere/travis-status/releases"
+);
+
+let package_json = JSON.parse(fs.readFileSync(config.file("package.json")));
 
 // https://www.npmjs.com/package/travis-ci
 
@@ -37,6 +48,16 @@ let defaultMenu = [{
     }
 }];
 
+process.on("unhandledRejection", (reason, promise) => {
+    console.error(reason);
+    config.log(reason);
+});
+
+process.on("uncaughtException", (reason) => {
+    console.error(reason);
+    config.log(reason);
+});
+
 app.on("window-all-closed", () => {});
 
 app.once("ready", () => {
@@ -51,6 +72,7 @@ app.once("ready", () => {
 });
 
 function startup(){
+    checkApplicationVersion();
     if (
         (settings["travis-ci"] && settings["travis-ci"]["token"]) ||
         (settings["travis-ci-pro"] && settings["travis-ci-pro"]["token"])
@@ -317,6 +339,7 @@ function updateStatus(){
         }].concat(defaultMenu))));
     }).catch((error) => {
         console.error(error);
+        config.log(error);
         tray.setContextMenu(Menu.buildFromTemplate([{
             type: "normal",
             label: `Last updated: ${ moment().format("HH:mm:ss") }`,
@@ -346,6 +369,45 @@ function updateBroadcasts(){
     // });
 }
 
+function callGitHubPackage(){
+    return new Promise((resolve, reject) => {
+        rq(version_url.href, {
+            json: true
+        }, (error, response) => {
+            if (error) {
+                console.error(error);
+                config.log(error);
+                return reject(error);
+            }
+            if (response.statusCode !== 200) {
+                console.log(response.statusCode, response.body);
+                return reject(new Error("invalid"));
+            }
+            return resolve(response.body);
+        });
+    });
+}
+
+function checkApplicationVersion() {
+    return new Promise((resolve, reject) => {
+        callGitHubPackage().then((response) => {
+            let version = response["version"];
+            if (semver.gte(package_json["version"], version)) {
+                return resolve();
+            }
+            defaultMenu = [{
+                type: "normal",
+                label: `New version available! (v${ version })`,
+                click: () => {
+                    shell.openExternal(release_url.href);
+                }
+            }].concat(defaultMenu);
+            buildMenu();
+            return resolve();
+        }).catch(reject);
+    });
+}
+
 function callTravisCI(url, token){
     return new Promise((resolve, reject) => {
         rq(url.href, {
@@ -357,6 +419,7 @@ function callTravisCI(url, token){
         }, (error, response) => {
             if (error) {
                 console.error(error);
+                config.log(error);
                 return reject(error);
             }
             if (response.statusCode !== 200) {

@@ -12,13 +12,13 @@ function validate(){
 
 function cancel() {
     ipcRenderer.send("preferences", undefined);
-    this.close();
+    window.close();
 }
 
 function response() {
     saveChanges(document.getElementById("travis-ci-pro").checked);
     ipcRenderer.send("preferences", options);
-    this.close();
+    window.close();
 }
 
 function saveChanges(travisPro){

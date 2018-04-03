@@ -1,19 +1,60 @@
 {
   "name": "travis-status",
+  "productName": "Travis CI Status",
   "version": "1.0.0",
   "description": "A Travis CI status reporter",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-packager ./ \"Travis CI Status\" --asar --overwrite --no-package-manager --out dist"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint src --color"
   },
-  "devDependencies": {
-    "electron": "^1.8.2",
-    "electron-packager": "^11.0.1",
-    "svg2png": "^4.1.1"
+  "author": "spywhere",
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "darwin": [
+          "zip"
+        ],
+        "linux": [
+          "deb",
+          "rpm"
+        ]
+      },
+      "electronPackagerConfig": {
+        "asar": true,
+        "packageManager": "npm",
+        "name": "<%= productName %>",
+        "appBundleId": "com.digitalparticle.travis-status"
+      },
+      "github_repository": {
+        "owner": "spywhere",
+        "name": "travis-status"
+      }
+    }
   },
   "dependencies": {
+    "electron-compile": "^6.4.2",
+    "electron-squirrel-startup": "^1.0.0",
     "moment": "^2.20.1",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "semver": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^9.6.1",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "electron-forge": "^5.1.1",
+    "electron-prebuilt-compile": "1.8.2",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "svg2png": "^4.1.1"
   }
 }

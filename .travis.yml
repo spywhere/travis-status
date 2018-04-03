@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+  - node
+os:
+  - linux
+  - osx
+
+addons:
+  apt:
+    packages:
+      - fakeroot
+      - rpm
+
+install:
+  - npm install
+  - npm update
+
+after_success:
+  - npm run publish
+
+notifications:
+  email: false
