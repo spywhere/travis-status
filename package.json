@@ -1,7 +1,7 @@
 {
   "name": "travis-status",
   "productName": "Travis CI Status",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Travis CI status reporter",
   "main": "src/main.js",
   "scripts": {
@@ -26,6 +26,9 @@
           "deb",
           "rpm"
         ]
+      },
+      "electronWinstallerConfig": {
+        "name": "<%= name %>"
       },
       "electronPackagerConfig": {
         "asar": true,
