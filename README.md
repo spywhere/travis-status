@@ -6,7 +6,7 @@ A status bar app that let you know which builds are broken on Travis CI
 
 ## Install
 
-Unfortunately, at this moment, you have to build your own binary package in order to use Travis Status.
+Just take a look at ![Releases](https://github.com/spywhere/travis-status/releases) and download it!
 
 ## Setup
 
