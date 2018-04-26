@@ -1,7 +1,7 @@
 {
   "name": "travis-status",
   "productName": "Travis CI Status",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A Travis CI status reporter",
   "main": "src/main.js",
   "scripts": {
@@ -45,19 +45,19 @@
   "dependencies": {
     "electron-compile": "^6.4.2",
     "electron-squirrel-startup": "^1.0.0",
-    "moment": "^2.20.1",
-    "request": "^2.83.0",
+    "moment": "^2.22.1",
+    "request": "^2.85.0",
     "semver": "^5.5.0"
   },
   "devDependencies": {
-    "@types/node": "^9.6.1",
+    "@types/node": "^10.0.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-env": "^1.6.1",
-    "electron-forge": "^5.1.1",
-    "electron-prebuilt-compile": "1.8.2",
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^15.1.0",
-    "eslint-plugin-import": "^2.8.0",
+    "electron-forge": "^5.2.0",
+    "electron-prebuilt-compile": "1.8.4",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
     "svg2png": "^4.1.1"
   }
 }
